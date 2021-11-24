@@ -75,48 +75,56 @@ function universitySearchResults($data) {
     
   }
 
-  // For the related skills query below
-  // Build a meta query array dynamically
-  // Loop through all the found related skills
-  // and add a filter for each one in the query
-  $skillsMetaQuery = array('relation' => 'OR');
+  // Only run the code if there are results for the skills search
+  // If there are no results for skills then the meta query will be empty
+  // and all the clients are returned
+  if($results["skills"]) {
+    // For the related skills query below
+    // Build a meta query array dynamically
+    // Loop through all the found related skills
+    // and add a filter for each one in the query
+    $skillsMetaQuery = array('relation' => 'OR');
 
-  forEach($results["skills"] as $item) {
-    array_push($skillsMetaQuery, array(
-      // name of the ACF you want to look inside
-      'key' => 'related_skills',
-      'compare' => 'LIKE',
-      'value' => '"' . $item["id"] . '"'
-    ));
-  }
-  
-  // Query based on relationships
-  // ********** What are we doing here? **********
-  // Look for all the clients where the related skill is what is entered in the search term
-  // You will get the id of the skill you are searching for from the data produced by first query
-  // it is the first item in the skills array
-  $skillRelationshipQuery = new WP_Query(array(
-    // What are you looking for?
-    'post_type' => 'client',
-    // Search based on value of custom field
-    'meta_query' => $skillsMetaQuery
-  ));
-
-  // Loop and put results in return array
-  while($skillRelationshipQuery->have_posts(  )) {
-    $skillRelationshipQuery->the_post();
-
-    if(get_post_type(  ) == 'client') {
-      array_push($results["clients"], array(
-        'title' => get_the_title(  ),
-        'permalink' => get_the_permalink(  ),
-        'image' => get_the_post_thumbnail_url( 0, 'client_card' )
+    forEach($results["skills"] as $item) {
+      array_push($skillsMetaQuery, array(
+        // name of the ACF you want to look inside
+        'key' => 'related_skills',
+        'compare' => 'LIKE',
+        'value' => '"' . $item["id"] . '"'
       ));
     }
-  }
+    
+    // Query based on relationships
+    // ********** What are we doing here? **********
+    // Look for all the clients where the related skill is what is entered in the search term
+    // You will get the id of the skill you are searching for from the data produced by first query
+    // it is the first item in the skills array
+    $skillRelationshipQuery = new WP_Query(array(
+      // What are you looking for?
+      'post_type' => 'client',
+      // Search based on value of custom field
+      'meta_query' => $skillsMetaQuery
+    ));
 
-  // Remove any duplicates
-  $results["clients"] = array_values(array_unique($results["clients"], SORT_REGULAR));
+    // Loop and put results in return array
+    while($skillRelationshipQuery->have_posts(  )) {
+      $skillRelationshipQuery->the_post();
+
+      if(get_post_type(  ) == 'client') {
+        array_push($results["clients"], array(
+          'title' => get_the_title(  ),
+          'permalink' => get_the_permalink(  ),
+          'image' => get_the_post_thumbnail_url( 0, 'client_card' )
+        ));
+      }
+    }
+
+    // Remove any duplicates
+    $results["clients"] = array_values(array_unique($results["clients"], SORT_REGULAR));
+  } // if end
+  
+  
+  
 
   return $results;
 }
