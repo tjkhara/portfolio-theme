@@ -15,7 +15,7 @@
   </div>
 
   <div class="generic-content mb-3">
-    <?php the_content(); ?>
+    <?php the_field("main_body_content"); ?>
   </div>
 
   <?php 
