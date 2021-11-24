@@ -4,4 +4,8 @@
 
 ### Bugs/Issues
 
-At this point if we search for gibberish then all the clients show up.
+Fixed Nov 24th, 2021 - At this point if we search for gibberish then all the clients show up.
+
+### mu-plugins code
+
+https://gist.github.com/tjkhara/cc2c8cdff8c2df72710857d4ab6f99c5
