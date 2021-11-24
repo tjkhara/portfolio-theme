@@ -101,7 +101,7 @@ function universitySearchResults($data) {
     // it is the first item in the skills array
     $skillRelationshipQuery = new WP_Query(array(
       // What are you looking for?
-      'post_type' => 'client',
+      'post_type' => array('client', 'project'),
       // Search based on value of custom field
       'meta_query' => $skillsMetaQuery
     ));
@@ -110,6 +110,31 @@ function universitySearchResults($data) {
     while($skillRelationshipQuery->have_posts(  )) {
       $skillRelationshipQuery->the_post();
 
+      // project
+      if(get_post_type(  ) == 'project') {
+
+        $projectDate = new DateTime(get_field('project_date'));
+        
+        $description = null;
+  
+        if (has_excerpt()) {
+          $description = get_the_excerpt();
+        } else {
+          $description = wp_trim_words(get_the_content(), 18);
+        }
+  
+  
+        array_push($results["projects"], array(
+          'title' => get_the_title(  ),
+          'permalink' => get_the_permalink(  ),
+          'month' => $projectDate->format('M'),
+          'day' => $projectDate->format('d'),
+          'year' => $projectDate->format('Y'),
+          'description' => $description
+        ));
+      }
+      
+      // client
       if(get_post_type(  ) == 'client') {
         array_push($results["clients"], array(
           'title' => get_the_title(  ),
@@ -121,6 +146,7 @@ function universitySearchResults($data) {
 
     // Remove any duplicates
     $results["clients"] = array_values(array_unique($results["clients"], SORT_REGULAR));
+    $results["projects"] = array_values(array_unique($results["projects"], SORT_REGULAR));
   } // if end
   
   
