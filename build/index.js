@@ -3813,6 +3813,11 @@ class MyNotes {
       type: "DELETE",
       success: response => {
         thisNote.slideUp();
+
+        if (response.userNoteCount < 21) {
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()(".note-limit-message").removeClass("active");
+        }
+
         console.log("Congrats!");
         console.log(response);
       },
@@ -3920,9 +3925,13 @@ class MyNotes {
         console.log("Congrats!");
         console.log(response);
       },
-      error: error => {
+      error: response => {
+        if (response.responseText == "You have reached your note limit.") {
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()(".note-limit-message").addClass("active");
+        }
+
         console.log("sorry");
-        console.log(error);
+        console.log(response);
       }
     });
   }

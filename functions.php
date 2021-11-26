@@ -9,6 +9,11 @@ function university_custom_rest() {
       return get_the_author();
     }
   ));
+  register_rest_field('note', 'userNoteCount', array(
+    'get_callback' => function() {
+      return count_user_posts( get_current_user_id(), 'note' );
+    }
+  ));
 }
 
 
@@ -183,11 +188,29 @@ function ourLoginTitle() {
   return get_bloginfo('name');
 }
 
+// Filter that filters right before data is saved to database
 // Force note posts to be private
-add_filter( 'wp_insert_post_data', 'makeNotePrivate');
+// User posts limit
+add_filter( 'wp_insert_post_data', 'makeNotePrivate', 10, 2);
 
-function makeNotePrivate($data) {
+function makeNotePrivate($data, $postarr) {
 
+  // strict policy to restrict html
+  if($data["post_type"] == "note") {
+
+    // if post array has id we are trying to edit
+    // if not id we are trying to create
+    // This if check is checking for no id so trying to create - now we will only block when trying to create
+    // editing will still be allowed
+    if(count_user_posts( get_current_user_id(), "note" ) > 20 AND !$postarr["ID"]) {
+      die("You have reached your note limit.");
+    }
+    
+    $data["post_content"] = sanitize_textarea_field( $data["post_content"] );
+    $data["post_title"] = sanitize_text_field( $data["post_title"] );
+  }
+
+  // Set status to private
   if($data["post_type"] == "note" && $data["post_status"] != "trash") {
     $data['post_status'] = "private";
   }
