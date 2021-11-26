@@ -17,6 +17,14 @@
 
 <div class="container container--narrow page-section">
 
+  <!-- Form to add notes -->
+  <div class="create-note">
+    <h2 class="headline headline--medium">Create New Note</h2>
+    <input class="new-note-title" type="text" placeholder="title">
+    <textarea class="new-note-body" name="" id="" cols="30" rows="10" placeholder="Your note here..."></textarea>
+    <span class="submit-note">Create Note</span>
+  </div>
+
   <ul class="min-list link-list" id="my-notes">
     <?php 
       // Query for notes
