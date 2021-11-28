@@ -1,5 +1,7 @@
 <?php
 
+
+require get_theme_file_path( '/inc/like-route.php' );
 require get_theme_file_path( '/inc/search-route.php' );
 
 // Customize REST API start
