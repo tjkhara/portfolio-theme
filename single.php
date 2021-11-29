@@ -31,28 +31,32 @@
     ));
 
     $existStatus = 'no';
-    
-    // Has the current user liked this post?
-    // If the current user has already liked this post. then return results
-    $existQuery = new WP_Query(array(
-      'author' => get_current_user_id(  ),
-      // Look in like posts
-      'post_type' => 'like',
-      'meta_query' => array(
-        array(
-          'key' => 'liked_post_id',
-          'compare' => '=',
-          'value' => get_the_ID(  )
-        )
-      )
-    ));
 
-    if($existQuery->found_posts) {
-      $existStatus = "yes";
+    if(is_user_logged_in(  )) {
+      // Has the current user liked this post?
+      // If the current user has already liked this post. then return results
+      $existQuery = new WP_Query(array(
+        'author' => get_current_user_id(  ),
+        // Look in like posts
+        'post_type' => 'like',
+        'meta_query' => array(
+          array(
+            'key' => 'liked_post_id',
+            'compare' => '=',
+            'value' => get_the_ID(  )
+          )
+        )
+      ));
+
+      if($existQuery->found_posts) {
+        $existStatus = "yes";
+      }
     }
     
+    
+    
     ?>
-    <span class="like-box" data-exists="<?php echo $existStatus ?>">
+    <span class="like-box" data-post="<?php the_ID(  ) ?>" data-exists="<?php echo $existStatus ?>">
       <i class="fa fa-heart-o" aria-hidden="true"></i>
       <i class="fa fa-heart" aria-hidden="true"></i>
       <span class="like-count"> <?php echo $likeCount->found_posts; ?> </span>
